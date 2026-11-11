@@ -1,0 +1,721 @@
+/* =========================================================
+   PORTFÓLIO · GABRIEL PAIVA
+   Estética: duotone retro-tech (CRT, halftone, glow, terminal)
+   Cor: só ciano (sem seletor de temas)
+   Modos: data-modo = escuro | claro           (no <html>)
+   ========================================================= */
+
+/* ---------- 0. FONTE DOS TÍTULOS (Planet Kosmos, local) ---------- */
+@font-face {
+  font-family: "Planet Kosmos";
+  src: url("fontes/Planet%20Kosmos.ttf") format("truetype");
+  font-display: swap;
+}
+
+/* ---------- 1. TOKENS (cores por tema e modo) ---------- */
+:root {
+  /* cores de apoio (fixas) */
+  --azul: #2A2AA0;
+  --creme: #F4EFE6;
+  --magenta: #FF3EA5;
+  --ok: #2FD18B;
+  --atencao: #FFB72E;
+  --sobre: #FF3EA5;
+
+  /* fontes */
+  --f-titulo: "Planet Kosmos", "Archivo", "Arial Black", Impact, sans-serif;
+  --f-texto: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
+
+  /* medidas */
+  --largura: 1120px;
+  --gutter: 16px;
+  --topo-h: 60px;
+  --raio: 4px;
+
+  /* TEMA ÚNICO: CIANO · escuro (padrão) */
+  --acento: #00E5FF;       /* preenchimentos, bordas, blocos */
+  --acento-txt: #00E5FF;   /* acento usado como cor de texto (legível no fundo) */
+  --sobre-acento: #0A0A0A; /* ciano é claro: texto escuro por cima */
+  --ponto: #00E5FF;        /* cor dos pontos da retícula radial (canvas) */
+  --fundo: #111111;
+  --fundo-2: #1B1D1E;      /* cartões, painéis */
+  --texto: #EFFFFF;
+  --texto-2: #A9C2C4;      /* texto secundário */
+  --linha: rgba(239, 255, 255, .2);
+  --brilho: rgba(0, 229, 255, .6);
+  --scan: rgba(0, 0, 0, .22);
+}
+
+/* MODO CLARO: fundo creme, texto quase preto, o acento continua ciano */
+[data-modo="claro"] {
+  --acento-txt: #00707D;   /* ciano escurecido para ler no creme */
+  --ponto: #0097A8;        /* pontos um pouco mais escuros para aparecer no creme */
+  --fundo: #F4EFE6;
+  --fundo-2: #FFFFFF;
+  --texto: #14101F;
+  --texto-2: #4A4458;
+  --linha: rgba(20, 16, 31, .25);
+  --brilho: transparent;          /* sem glow no claro: fica limpo */
+  --scan: rgba(20, 16, 31, .05);
+  --ok: #138A55;
+  --atencao: #B9770B;
+}
+
+/* ---------- 2. RESET E BASE ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: calc(var(--topo-h) + 12px); /* âncoras não ficam embaixo do menu fixo */
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--fundo);
+  color: var(--texto);
+  font-family: var(--f-texto);
+  font-size: 1rem;
+  line-height: 1.65;
+  overflow-x: hidden;
+  transition: background-color .3s, color .3s;
+}
+
+img { display: block; max-width: 100%; height: auto; }
+a { color: inherit; }
+button { font: inherit; color: inherit; cursor: pointer; }
+ul, ol { margin: 0; padding: 0; list-style: none; }
+h1, h2, h3, p, figure { margin: 0; }
+strong { font-weight: 600; color: var(--acento-txt); }
+
+::selection { background: var(--acento); color: var(--sobre-acento); }
+
+/* foco visível para quem navega pelo teclado */
+:focus-visible {
+  outline: 2px dashed var(--acento-txt);
+  outline-offset: 3px;
+}
+.bloco-cor :focus-visible { outline-color: var(--sobre-acento); }
+
+.container {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: var(--largura);
+  margin: 0 auto;
+  padding: 0 var(--gutter);
+}
+
+.logo {
+  letter-spacing: 40px;
+}
+
+/* ---------- 3. EFEITOS ---------- */
+
+/* scanlines por cima da página toda */
+.crt {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent 2px,
+    var(--scan) 2px,
+    var(--scan) 3px
+  );
+}
+
+/* retícula radial (halftone em anéis concêntricos)
+   Os pontos são desenhados num <canvas> pelo script.js (seção "RETÍCULA").
+   Aqui só posicionamos cada canvas. Parâmetros do desenho ficam nos data-*
+   do HTML: data-cx/data-cy = centro (0–1), data-r = raio (fração da largura),
+   data-ang = ângulo dos dois "lóbulos" densos (graus). */
+.reticula {
+  position: absolute;
+  z-index: 0;
+  display: block;
+  pointer-events: none;
+  opacity: .55;
+}
+[data-modo="claro"] .reticula { opacity: .45; }
+.hero-dots {
+  top: 0; right: 0;
+  width: 62%; height: 100%;
+}
+.case-dots {
+  top: 0; left: 0;
+  width: 45%; height: 420px;
+}
+.contato-dots {
+  bottom: 0; right: 0;
+  width: 55%; height: 100%;
+}
+
+/* cursor piscando de terminal */
+.cursor {
+  display: inline-block;
+  margin-left: .05em;
+  color: var(--acento-txt);
+  animation: piscar 1s steps(1) infinite;
+}
+@keyframes piscar { 50% { opacity: 0; } }
+
+/* rótulo estilo terminal "> algo" */
+.rotulo {
+  font-family: var(--f-mono);
+  font-size: .85rem;
+  letter-spacing: .04em;
+  color: var(--acento-txt);
+  margin-bottom: .5rem;
+}
+
+/* títulos: Planet Kosmos, com glow.
+   A fonte é unicase (maiúscula e minúscula têm o mesmo desenho), mas só as
+   minúsculas têm todos os acentos — por isso forçamos lowercase. */
+.titulo {
+  font-family: var(--f-titulo);
+  font-style: normal;
+  font-weight: 400;
+  font-size: clamp(2rem, 7vw, 3.6rem);
+  line-height: 1;
+  text-transform: lowercase;
+  letter-spacing: 0;
+  margin-bottom: 1.5rem;
+  text-shadow: 0 0 18px var(--brilho);
+}
+
+.badge {
+  display: inline-block;
+  padding: .1em .55em;
+  margin-left: .4em;
+  border-radius: 2px;
+  background: var(--magenta);
+  color: #14101F;
+  font-family: var(--f-mono);
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  vertical-align: middle;
+}
+
+/* ---------- 4. BOTÕES ---------- */
+.btn {
+  display: inline-block;
+  padding: .85em 1.3em;
+  border: 2px solid var(--acento);
+  border-radius: var(--raio);
+  font-family: var(--f-mono);
+  font-size: .9rem;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-decoration: none;
+  text-align: center;
+  transition: transform .15s, box-shadow .15s, background-color .15s, color .15s;
+}
+.btn:hover { transform: translate(-2px, -2px); box-shadow: 4px 4px 0 var(--texto); }
+.btn:active { transform: none; box-shadow: none; }
+
+.btn-cheio { background: var(--acento); color: var(--sobre-acento); }
+.btn-borda { background: transparent; color: var(--texto); border-style: dashed; }
+.btn-borda:hover { background: var(--acento); color: var(--sobre-acento); border-style: solid; }
+.btn-pequeno { padding: .45em .9em; font-size: .78rem; }
+
+/* ---------- 5. MENU (topo fixo) ---------- */
+.topo {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 50;
+  height: var(--topo-h);
+  background: color-mix(in srgb, var(--fundo) 88%, transparent);
+  -webkit-backdrop-filter: blur(8px);
+          backdrop-filter: blur(8px);
+  border-bottom: 1px dashed var(--linha);
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 100%;
+  max-width: var(--largura);
+  margin: 0 auto;
+  padding: 0 var(--gutter);
+}
+
+.logo {
+  font-family: var(--f-titulo);
+  font-style: normal;
+  font-weight: 400;
+  font-size: 1.05rem;
+  letter-spacing: 0;
+  text-decoration: none;
+  white-space: nowrap;
+  margin-right: auto;
+}
+.logo span { color: var(--acento-txt); }
+
+.menu {
+  display: flex;
+  gap: 4px;
+}
+.menu a {
+  display: block;
+  padding: .4em .6em;
+  font-family: var(--f-mono);
+  font-size: .82rem;
+  text-decoration: none;
+  color: var(--texto-2);
+  border-bottom: 2px solid transparent;
+  transition: color .15s, border-color .15s;
+}
+.menu a:hover { color: var(--texto); }
+.menu a.ativo {
+  color: var(--acento-txt);
+  border-bottom-color: var(--acento);
+}
+
+.menu-btn {
+  display: none;
+  padding: .45em .7em;
+  background: transparent;
+  border: 1px dashed var(--linha);
+  border-radius: var(--raio);
+  font-family: var(--f-mono);
+  font-size: .82rem;
+}
+
+.ajustes {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.btn-modo {
+  width: 34px; height: 34px;
+  padding: 0;
+  background: transparent;
+  border: 1px dashed var(--linha);
+  border-radius: 50%;
+  font-size: 1.05rem;
+  line-height: 1;
+  transition: transform .3s;
+}
+.btn-modo:hover { transform: rotate(180deg); }
+
+/* menu no celular */
+@media (max-width: 860px) {
+  .menu-btn { display: inline-block; order: 2; }
+  .ajustes { order: 3; }
+
+  .menu {
+    display: none;
+    position: absolute;
+    top: var(--topo-h);
+    left: 0; right: 0;
+    flex-direction: column;
+    gap: 0;
+    padding: 8px var(--gutter) 16px;
+    background: var(--fundo);
+    border-bottom: 1px dashed var(--linha);
+  }
+  .menu-btn[aria-expanded="true"] + .menu { display: flex; }
+  .menu a { padding: .8em 0; font-size: .95rem; border-bottom: 1px dashed var(--linha); }
+  .menu a.ativo { border-bottom-color: var(--acento); }
+}
+
+@media (max-width: 400px) {
+  .nav { gap: 8px; }
+  .logo { font-size: .92rem; }
+  .ajustes { gap: 4px; }
+}
+
+/* ---------- 6. SEÇÕES ---------- */
+.secao,
+.bloco-cor {
+  position: relative;
+  padding: clamp(64px, 10vw, 112px) 0;
+  overflow: hidden;
+}
+
+/* bloco de cor chapada: alterna com as seções escuras/claras */
+.bloco-cor {
+  background: var(--acento);
+  color: var(--sobre-acento);
+  --texto: var(--sobre-acento);
+  --texto-2: var(--sobre-acento);
+  --linha: color-mix(in srgb, var(--sobre-acento) 40%, transparent);
+}
+.bloco-cor .rotulo,
+.bloco-cor strong { color: var(--sobre-acento); }
+.bloco-cor .titulo { text-shadow: none; }
+.bloco-cor .cursor { color: var(--sobre-acento); }
+
+/* ---------- 7. HERO ---------- */
+.hero {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 100vh;
+  min-height: 100svh;
+  padding: calc(var(--topo-h) + 40px) 0 64px;
+  overflow: hidden;
+}
+.prompt {
+  font-family: var(--f-mono);
+  font-size: clamp(.95rem, 2.5vw, 1.15rem);
+  color: var(--acento-txt);
+  margin-bottom: .75rem;
+}
+.nome {
+  font-family: var(--f-titulo);
+  font-style: normal;
+  font-weight: 400;
+  font-size: clamp(3.2rem, 15vw, 9.5rem);
+  line-height: .9;
+  letter-spacing: 0;
+  text-shadow: 0 0 28px var(--brilho), 4px 4px 0 var(--acento);
+  margin-bottom: 1.5rem;
+}
+[data-modo="claro"] .nome { text-shadow: 5px 5px 0 var(--acento); }
+.tagline {
+  max-width: 34em;
+  font-size: clamp(1.05rem, 2.6vw, 1.3rem);
+  line-height: 1.5;
+  color: var(--texto-2);
+  margin-bottom: 1.5rem;
+}
+.tagline .seta { color: var(--acento-txt); }
+.tagline strong { color: var(--texto); }
+.selo {
+  display: inline-flex;
+  align-items: center;
+  gap: .6em;
+  padding: .4em .9em;
+  border: 1px dashed var(--linha);
+  border-radius: 999px;
+  font-family: var(--f-mono);
+  font-size: .8rem;
+  margin-bottom: 2rem;
+}
+.ponto {
+  width: 9px; height: 9px;
+  border-radius: 50%;
+  background: var(--ok);
+  box-shadow: 0 0 0 0 var(--ok);
+  animation: pulsar 2s infinite;
+}
+@keyframes pulsar {
+  0%   { box-shadow: 0 0 0 0 color-mix(in srgb, var(--ok) 70%, transparent); }
+  70%  { box-shadow: 0 0 0 8px transparent; }
+  100% { box-shadow: 0 0 0 0 transparent; }
+}
+.acoes { display: flex; flex-wrap: wrap; gap: 12px; }
+
+/* ---------- 8. SOBRE ---------- */
+.sobre-grid {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: clamp(32px, 6vw, 72px);
+  align-items: center;
+}
+.sobre-grid p + p { margin-top: 1rem; }
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 1.5rem;
+}
+.chips li {
+  padding: .35em .8em;
+  border: 1px dashed var(--sobre-acento);
+  border-radius: var(--raio);
+  font-family: var(--f-mono);
+  font-size: .75rem;
+  font-weight: 700;
+}
+
+/* foto original, sem filtro */
+.foto {
+  position: relative;
+  max-width: 420px;
+  width: 100%;
+  justify-self: center;
+  border: 2px solid var(--sobre-acento);
+  background: var(--fundo);
+  box-shadow: 10px 10px 0 color-mix(in srgb, #000 35%, transparent);
+}
+.foto img {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+}
+.foto figcaption {
+  padding: .5em .8em;
+  font-family: var(--f-mono);
+  font-size: .78rem;
+  background: var(--fundo);
+  color: var(--acento-txt);
+}
+
+@media (max-width: 760px) {
+  .sobre-grid { grid-template-columns: 1fr; }
+  .foto { max-width: 340px; }
+}
+
+/* ---------- 9. TRAJETÓRIA ---------- */
+.linha-tempo {
+  position: relative;
+  max-width: 760px;
+  padding-left: 28px;
+  border-left: 2px dashed var(--linha);
+  margin-left: 6px;
+}
+.linha-tempo li {
+  position: relative;
+  padding-bottom: 2rem;
+}
+.linha-tempo li:last-child { padding-bottom: 0; }
+.linha-tempo li::before {     /* quadradinho na linha */
+  content: "";
+  position: absolute;
+  left: -36px; top: .35em;
+  width: 14px; height: 14px;
+  background: var(--acento);
+  box-shadow: 0 0 12px var(--brilho);
+}
+.linha-tempo .data {
+  display: block;
+  font-family: var(--f-mono);
+  font-size: .82rem;
+  font-weight: 700;
+  color: var(--acento-txt);
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  margin-bottom: .2rem;
+}
+.linha-tempo p { color: var(--texto-2); }
+.linha-tempo .proximo::before {
+  background: transparent;
+  border: 2px dashed var(--acento);
+  box-shadow: none;
+}
+
+/* ---------- 10. CASE ---------- */
+.ficha {
+  font-family: var(--f-mono);
+  font-size: .85rem;
+  color: var(--texto-2);
+  margin: -.75rem 0 2rem;
+}
+.colunas {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+.coluna {
+  padding: 20px;
+  background: var(--fundo-2);
+  border: 1px dashed var(--linha);
+  border-top: 3px solid var(--acento);
+  border-radius: var(--raio);
+}
+.coluna h3 {
+  font-family: var(--f-mono);
+  font-size: .95rem;
+  color: var(--acento-txt);
+  margin-bottom: .5rem;
+}
+.coluna p { font-size: .95rem; color: var(--texto-2); }
+.equipe {
+  margin: 1rem 0 2.5rem;
+  font-family: var(--f-mono);
+  font-size: .8rem;
+  color: var(--texto-2);
+}
+@media (max-width: 860px) {
+  .colunas { grid-template-columns: 1fr; }
+}
+
+/* ---------- 11. PRINT REAL ---------- */
+/* print real do dashboard */
+.prints {
+  max-width: 840px;
+  margin-top: 2rem;
+}
+.prints img {
+  width: 100%;
+  border: 2px dashed var(--linha);
+  border-radius: var(--raio);
+}
+.prints figcaption { margin: .5rem 0 0; }
+
+/* ---------- 12. CARDS (projetos e serviços) ---------- */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+  gap: 16px;
+}
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: .6rem;
+  padding: 24px 20px;
+  background: var(--fundo-2);
+  border: 1px solid var(--linha);
+  border-radius: var(--raio);
+  transition: transform .2s, box-shadow .2s, border-color .2s;
+}
+.card:hover {
+  transform: translate(-3px, -3px);
+  border-color: var(--acento);
+  box-shadow: 6px 6px 0 var(--acento);
+}
+.card-num {
+  font-family: var(--f-titulo);
+  font-style: normal;
+  font-weight: 400;
+  font-size: 2.4rem;
+  line-height: 1;
+  color: transparent;
+  -webkit-text-stroke: 1.5px var(--acento-txt);
+}
+.card h3 {
+  font-family: var(--f-titulo);
+  font-style: normal;
+  font-weight: 400;
+  font-size: 1.25rem;
+  line-height: 1.2;
+  text-transform: lowercase; /* acentos da Planet Kosmos (ver .titulo) */
+}
+.card p { color: var(--texto-2); font-size: .95rem; }
+.tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.tags li {
+  padding: .15em .55em;
+  border: 1px dashed var(--linha);
+  border-radius: 2px;
+  font-family: var(--f-mono);
+  font-size: .72rem;
+  color: var(--texto-2);
+}
+.card-link {
+  margin-top: auto;
+  padding-top: .5rem;
+  font-family: var(--f-mono);
+  font-size: .85rem;
+  font-weight: 700;
+  color: var(--acento-txt);
+  text-decoration: none;
+}
+.card-link:hover { text-decoration: underline; text-underline-offset: 4px; }
+.card-breve { border-style: dashed; background: transparent; }
+
+/* cards dentro do bloco de cor (serviços) */
+.bloco-cor .intro {
+  max-width: 36em;
+  font-size: 1.1rem;
+  margin: -.5rem 0 2rem;
+}
+.bloco-cor .card {
+  background: color-mix(in srgb, #000 14%, transparent);
+  border-color: var(--linha);
+}
+.bloco-cor .card:hover { border-color: var(--sobre-acento); box-shadow: 6px 6px 0 var(--sobre-acento); }
+.bloco-cor .card-num { -webkit-text-stroke-color: var(--sobre-acento); }
+
+/* ---------- 13. CONTATO ---------- */
+.gigante {
+  font-size: clamp(2.8rem, 12vw, 7.5rem);
+  line-height: .92;
+  margin-bottom: 2.5rem;
+}
+.canais {
+  max-width: 820px;
+  border-top: 1px dashed var(--linha);
+}
+.canal {
+  display: grid;
+  grid-template-columns: 110px 1fr auto;
+  align-items: center;
+  gap: 8px 16px;
+  padding: 18px 0;
+  border-bottom: 1px dashed var(--linha);
+}
+.canal-nome {
+  font-family: var(--f-mono);
+  font-size: .78rem;
+  color: var(--texto-2);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+}
+.canal-valor {
+  font-family: var(--f-mono);
+  font-size: clamp(.9rem, 2.4vw, 1.1rem);
+  font-weight: 700;
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+a.canal-valor:hover { color: var(--acento-txt); }
+.canal-seta { color: var(--acento-txt); font-size: 1.2rem; }
+
+@media (max-width: 560px) {
+  .canal { grid-template-columns: 1fr auto; }
+  .canal-nome { grid-column: 1 / -1; }
+}
+
+/* ---------- 14. RODAPÉ E AVISO ---------- */
+.rodape {
+  padding: 28px var(--gutter);
+  border-top: 1px dashed var(--linha);
+  font-family: var(--f-mono);
+  font-size: .75rem;
+  color: var(--texto-2);
+  text-align: center;
+}
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  z-index: 200;
+  padding: .7em 1.2em;
+  background: var(--acento);
+  color: var(--sobre-acento);
+  border-radius: var(--raio);
+  font-family: var(--f-mono);
+  font-size: .85rem;
+  font-weight: 700;
+  box-shadow: 4px 4px 0 var(--texto);
+  transform: translate(-50%, 160%);
+  opacity: 0;
+  transition: transform .3s, opacity .3s;
+  pointer-events: none;
+}
+.toast.visivel { transform: translate(-50%, 0); opacity: 1; }
+
+/* ---------- 15. REVELAR AO ROLAR ---------- */
+/* só esconde se o JS estiver rodando (a classe .js é posta no <html> pelo script) */
+.js .revelar {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity .6s ease, transform .6s ease;
+}
+.js .revelar.visivel { opacity: 1; transform: none; }
+
+/* ---------- 16. MENOS MOVIMENTO ---------- */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+  .js .revelar { opacity: 1; transform: none; }
+}
+
+::-webkit-scrollbar {
+  display: none;
+}

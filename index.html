@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-modo="escuro">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Gabriel Paiva · Portfólio</title>
+  <meta name="description" content="Gabriel Marinho Paiva — estudante de ADS a caminho de Eng. de Software. Transformo ideias em protótipos funcionais com IA.">
+
+  <!-- Antes de pintar a página, aplica o modo salvo (evita "piscar" claro/escuro) -->
+  <script>
+    try {
+      var m = localStorage.getItem('modo');
+      if (m) document.documentElement.dataset.modo = m;
+    } catch (e) { /* navegador bloqueou o localStorage: segue com o padrão */ }
+  </script>
+
+  <!-- Fontes: Archivo (títulos), JetBrains Mono (terminal), Inter (texto) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@1,800;1,900&family=Inter:wght@400;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Camada de scanlines (efeito CRT) por cima de tudo -->
+  <div class="crt" aria-hidden="true"></div>
+
+  <!-- ===================== MENU ===================== -->
+  <header class="topo">
+    <nav class="nav" aria-label="Principal">
+      <a href="#inicio" class="logo">GABRIEL<span>.</span>PAIVA</a>
+
+      <button class="menu-btn" aria-expanded="false" aria-controls="menu-lista">&gt; menu<span class="cursor">_</span></button>
+
+      <ul class="menu" id="menu-lista">
+        <li><a href="#sobre">&gt; sobre</a></li>
+        <li><a href="#trajetoria">&gt; trajetória</a></li>
+        <li><a href="#case">&gt; case</a></li>
+        <li><a href="#projetos">&gt; projetos</a></li>
+        <li><a href="#servicos">&gt; serviços</a></li>
+        <li><a href="#contato">&gt; contato</a></li>
+      </ul>
+
+      <div class="ajustes">
+        <button class="btn-modo" aria-label="Alternar modo claro e escuro" title="Claro / escuro">◐</button>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+
+    <!-- ===================== HERO ===================== -->
+    <section class="hero" id="inicio">
+      <canvas class="reticula hero-dots" data-cx=".62" data-cy=".46" data-r=".62" data-ang="-135" aria-hidden="true"></canvas>
+      <div class="container">
+        <p class="prompt">&gt; olá, eu sou<span class="cursor">_</span></p>
+        <h1 class="nome">GABRIEL<br>PAIVA</h1>
+        <p class="tagline">
+          Estudante de ADS <span class="seta">→</span> Eng. de Software.<br>
+          Transformo ideias em <strong>protótipos funcionais com IA</strong>.
+        </p>
+        <div class="acoes">
+          <a href="#case" class="btn btn-cheio">[ VER O CASE ]</a>
+          <button class="btn btn-borda copiar-email">[ COPIAR E-MAIL ]</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== SOBRE ===================== -->
+    <section class="bloco-cor" id="sobre">
+      <div class="container sobre-grid revelar">
+        <div>
+          <p class="rotulo">&gt; about_me</p>
+          <h2 class="titulo">SOBRE MIM</h2>
+          <p>Estou no começo da carreira e já entrego. Uso IA como ferramenta de trabalho: em vez de passar semanas discutindo requisitos, monto um protótipo funcionando em poucos dias. Assim o cliente clica, testa e decide o que quer e o que não quer.</p>
+          <p>Hoje sei o básico de Python, HTML e CSS e estou começando JavaScript. Este site é o meu primeiro projeto de estudo nele. Sou de Anajatuba (MA) e quero, um dia, levar tecnologia e empreendedorismo para a minha cidade.</p>
+          <ul class="chips">
+            <li>PROTOTIPAGEM COM IA</li>
+            <li>DASHBOARDS &amp; MVPs</li>
+            <li>APRENDENDO RÁPIDO</li>
+          </ul>
+        </div>
+        <figure class="foto">
+          <img src="foto.webp" alt="Foto de Gabriel Marinho Paiva" width="420" height="420" loading="lazy">
+          <figcaption>&gt; gabriel.webp</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- ===================== TRAJETÓRIA ===================== -->
+    <section class="secao" id="trajetoria">
+      <div class="container">
+        <p class="rotulo">&gt; where_ive_been</p>
+        <h2 class="titulo">TRAJETÓRIA</h2>
+        <ol class="linha-tempo">
+          <li class="revelar">
+            <span class="data">fev 2026</span>
+            <p>Início em <strong>Análise e Desenvolvimento de Sistemas</strong> na Universidade Ceuma (campus Renascença, São Luís – MA).</p>
+          </li>
+          <li class="revelar">
+            <span class="data">abr–jun 2026</span>
+            <p>Projeto de consultoria para a <strong>Globaltec Educacional</strong> com a Equipe V3: dashboard de visibilidade de fluxo + assistente Kosmus AI sobre o ERP.</p>
+          </li>
+          <li class="revelar">
+            <span class="data">jun 2026</span>
+            <p>O projeto virou <strong>estágio</strong> na Globaltec Educacional.</p>
+          </li>
+          <li class="revelar">
+            <span class="data">2026</span>
+            <p>Participo do <strong>Oxygeni Hub</strong> (agência de inovação da Uniceuma), estudo JavaScript e construí este portfólio.</p>
+          </li>
+          <li class="revelar proximo">
+            <span class="data">próximo passo<span class="cursor">_</span></span>
+            <p>Migração para <strong>Engenharia de Software</strong> e um estágio remunerado onde eu cresça com um time.</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ===================== CASE ===================== -->
+    <section class="secao case" id="case">
+      <canvas class="reticula case-dots" data-cx=".3" data-cy=".4" data-r=".75" data-ang="-135" aria-hidden="true"></canvas>
+      <div class="container">
+        <p class="rotulo">&gt; featured_project <span class="badge">★ destaque</span></p>
+        <h2 class="titulo">CAMADA DE INTELIGÊNCIA<br>PARA ERP — GLOBALTEC</h2>
+        <p class="ficha">Consultoria · Equipe V3 · 28/04 – 20/06/2026 · Lovable + Claude API</p>
+
+        <div class="colunas">
+          <article class="coluna revelar">
+            <h3>&gt; problema</h3>
+            <p>O ERP da Globaltec (módulos Principal, Suprimentos, Gestão e Sistema) não mostrava onde o fluxo de trabalho travava.</p>
+          </article>
+          <article class="coluna revelar">
+            <h3>&gt; o que fizemos</h3>
+            <p>Depois de cada reunião com o cliente, eu e um colega anotávamos as ideias, prototipávamos as melhores no Lovable e levávamos funcionando para a reunião seguinte. Saíram um dashboard de visibilidade de fluxo e o <strong>Kosmus AI</strong>, um assistente com a Claude API.</p>
+          </article>
+          <article class="coluna revelar">
+            <h3>&gt; resultado</h3>
+            <p>Relatórios técnicos (ABNT), relatórios quinzenais, pitch e mapa mental do ERP — e o projeto virou o meu estágio na Globaltec.</p>
+          </article>
+        </div>
+
+        <p class="equipe">Equipe V3 · 4 estudantes de ADS da Uniceuma.</p>
+
+        <!-- ---------- PRINT REAL DO DASHBOARD ---------- -->
+        <figure class="prints revelar">
+          <img src="prints/print-5.webp" width="840" height="424" loading="lazy" alt="Print real do dashboard de visibilidade de fluxo feito para o cliente">
+          <figcaption class="rotulo">&gt; print real do dashboard</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- ===================== PROJETOS ===================== -->
+    <section class="secao" id="projetos">
+      <div class="container">
+        <p class="rotulo">&gt; works</p>
+        <h2 class="titulo">PROJETOS</h2>
+        <div class="cards">
+          <article class="card revelar">
+            <span class="card-num">01</span>
+            <h3>Dashboard Operacional (MVP)</h3>
+            <p>Visibilidade de fluxo e assistente com IA sobre um ERP real. Feito em equipe, virou estágio.</p>
+            <ul class="tags"><li>Lovable</li><li>Claude API</li><li>UX</li></ul>
+            <a href="#case" class="card-link">&gt; ver o case</a>
+          </article>
+          <article class="card revelar">
+            <span class="card-num">02</span>
+            <h3>Este portfólio</h3>
+            <p>HTML, CSS e JS puro, sem framework, com comentários em português. Feito para estudar.</p>
+            <ul class="tags"><li>HTML</li><li>CSS</li><li>JavaScript</li></ul>
+            <a href="https://github.com/LgymHL" target="_blank" rel="noopener" class="card-link">&gt; github</a>
+          </article>
+          <article class="card card-breve revelar">
+            <span class="card-num">03</span>
+            <h3>Em breve<span class="cursor">_</span></h3>
+            <p>Próximos projetos de estudo vão aparecer aqui. Acompanhe pelo GitHub.</p>
+            <a href="https://github.com/LgymHL" target="_blank" rel="noopener" class="card-link">&gt; github.com/LgymHL</a>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== SERVIÇOS ===================== -->
+    <section class="bloco-cor" id="servicos">
+      <div class="container">
+        <p class="rotulo">&gt; services</p>
+        <h2 class="titulo">SERVIÇOS</h2>
+        <p class="intro">Tem uma ideia e quer ver ela funcionando antes de investir pesado? Eu ajudo.</p>
+        <div class="cards">
+          <article class="card revelar">
+            <span class="card-num">A</span>
+            <h3>Protótipo rápido com IA</h3>
+            <p>Sua ideia virando algo clicável em poucos dias.</p>
+          </article>
+          <article class="card revelar">
+            <span class="card-num">B</span>
+            <h3>Dashboard / MVP</h3>
+            <p>Indicadores e telas para validar antes de desenvolver.</p>
+          </article>
+          <article class="card revelar">
+            <span class="card-num">C</span>
+            <h3>Landing page leve</h3>
+            <p>Página simples, rápida e que roda em qualquer celular.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== CONTATO ===================== -->
+    <section class="secao contato" id="contato">
+      <canvas class="reticula contato-dots" data-cx=".7" data-cy=".6" data-r=".6" data-ang="-135" aria-hidden="true"></canvas>
+      <div class="container">
+        <p class="rotulo">&gt; lets_talk</p>
+        <h2 class="titulo gigante">VAMOS<br>CONVERSAR<span class="cursor">_</span></h2>
+
+        <ul class="canais">
+          <li class="canal">
+            <span class="canal-nome">e-mail</span>
+            <span class="canal-valor" id="email">gabrielmarinhopaiva325@gmail.com</span>
+            <button class="btn btn-cheio btn-pequeno copiar-email">COPIAR</button>
+          </li>
+          <li class="canal">
+            <span class="canal-nome">whatsapp</span>
+            <a class="canal-valor" href="https://wa.me/5598984385595?text=Ol%C3%A1%2C%20Gabriel!%20Vi%20seu%20portf%C3%B3lio." target="_blank" rel="noopener">(98) 98438-5595</a>
+            <span class="canal-seta" aria-hidden="true">↗</span>
+          </li>
+          <li class="canal">
+            <span class="canal-nome">linkedin</span>
+            <a class="canal-valor" href="https://www.linkedin.com/in/gabrielmph" target="_blank" rel="noopener">linkedin.com/in/gabrielmph</a>
+            <span class="canal-seta" aria-hidden="true">↗</span>
+          </li>
+          <li class="canal">
+            <span class="canal-nome">github</span>
+            <a class="canal-valor" href="https://github.com/LgymHL" target="_blank" rel="noopener">github.com/LgymHL</a>
+            <span class="canal-seta" aria-hidden="true">↗</span>
+          </li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <footer class="rodape">
+    <p>© 2026 Gabriel Marinho Paiva<span class="cursor">_</span></p>
+  </footer>
+
+  <!-- Aviso que aparece ao copiar o e-mail -->
+  <div class="toast" id="toast" role="status" aria-live="polite">&gt; copiado ✓</div>
+
+  <script src="script.js"></script>
+</body>
+</html>
